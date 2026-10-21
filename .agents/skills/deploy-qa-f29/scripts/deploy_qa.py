@@ -32,7 +32,7 @@ BASE_IMAGES = [
 ]
 APP_IMAGE = "f29-qa:latest"
 
-REPO_ROOT = Path(__file__).resolve().parents[3]
+REPO_ROOT = Path(__file__).resolve().parents[4]
 
 
 def log_step(title: str) -> None:

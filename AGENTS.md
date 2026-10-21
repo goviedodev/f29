@@ -54,8 +54,10 @@ El sistema es un monolito serverless full-stack sobre **Cloudflare Workers + Hon
 | `Dockerfile` | Imagen `node:22-bookworm-slim` para ejecutar el servicio en el servidor QA `asus`. |
 | `docker-entrypoint.sh` | Script de inicio en QA: migraciones D1, creación de instancia en Evolution API y cron diario interno (`09:15 America/Santiago`). |
 | `docker-compose.yml` | Orquestación en QA de `f29_qa` (`5174`), `evolution_api` (`8080`), `evolution_postgres` y `evolution_redis`. |
-| `deploy-qa.sh` | Script único de despliegue hacia `goviedo@asus:/home/goviedo/proyectos/f29`. |
-| `iniciar-qa.sh` | Script bash para iniciar, detener, reiniciar o ver estado/logs del proyecto en `asus`. |
+| `deploy-qa.sh` | Wrapper hacia el automatizador Python de despliegue QA (`deploy_qa.py deploy`). |
+| `iniciar-qa.sh` | Wrapper hacia el automatizador Python para iniciar/detener/ver estado en `asus` (`deploy_qa.py`). |
+| `.agents/skills/deploy-qa-f29/` | Skill y programa Python (`scripts/deploy_qa.py`) para automatizar el deploy, operación y sync Git en QA. |
+| `.agents/skills/qa-whatsapp-diagnostics/` | Skill y programa Python (`scripts/qa_whatsapp.py`) para diagnosticar WhatsApp, sincronizar grupos y probar el cron en QA. |
 
 ## Comandos Frecuentes
 

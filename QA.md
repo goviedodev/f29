@@ -30,7 +30,16 @@ El stack en `goviedo@asus:/home/goviedo/proyectos/f29` corre sobre Docker Compos
 - `f29_evolution_instances`: Instancias de Evolution API.
 - `f29_evolution_redis`: Datos persistentes de Redis (`appendonly yes`).
 
-## Iniciar / Administrar el Proyecto en `asus` (`./iniciar-qa.sh`)
+## Automatización en Python y Skills de QA
+
+Toda la operación de despliegue, control de contenedores, sincronización Git y diagnóstico de WhatsApp en QA está automatizada con programas en Python 3 (sin dependencias externas) dentro de `.agents/skills/`:
+
+| Skill | Programa Python | Propósito |
+| :--- | :--- | :--- |
+| `deploy-qa-f29` | `.agents/skills/deploy-qa-f29/scripts/deploy_qa.py` | Compila, transfiere imágenes Docker por SSH, sincroniza archivos/Git, levanta contenedores y verifica salud HTTP en `asus`. |
+| `qa-whatsapp-diagnostics` | `.agents/skills/qa-whatsapp-diagnostics/scripts/qa_whatsapp.py` | Verifica sesión de WhatsApp (`contidep`), sincroniza grupos reales, busca grupos en D1 y ejecuta pruebas del cron diario. |
+
+## Iniciar / Administrar el Proyecto en `asus` (`./iniciar-qa.sh` / `deploy_qa.py`)
 
 El script `iniciar-qa.sh` funciona tanto si lo ejecutas conectado dentro de `asus` (`/home/goviedo/proyectos/f29/iniciar-qa.sh`) como desde tu máquina local:
 
