@@ -1,0 +1,107 @@
+services:
+  f29-qa:
+    image: f29-qa:latest
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: f29_qa
+    restart: unless-stopped
+    depends_on:
+      api:
+        condition: service_started
+    ports:
+      - "5174:5174"
+    environment:
+      - PORT=5174
+      - HOST=0.0.0.0
+      - NODE_ENV=development
+      - EVOLUTION_API_URL=http://evolution_api:8080
+      - EVOLUTION_API_KEY=${AUTHENTICATION_API_KEY:-429683C4C977415CAAFCCE10F7D57E11}
+      - EVOLUTION_INSTANCE=contidep
+      - ADMIN_PASSWORD=admin123
+    volumes:
+      - f29_wrangler_data:/app/.wrangler
+    networks:
+      - evolution-net
+
+  api:
+    container_name: evolution_api
+    image: evoapicloud/evolution-api:latest
+    restart: unless-stopped
+    depends_on:
+      evolution-postgres:
+        condition: service_healthy
+      redis:
+        condition: service_started
+    ports:
+      - "8080:8080"
+    volumes:
+      - evolution_instances:/evolution/instances
+    networks:
+      - evolution-net
+    env_file:
+      - .env
+    expose:
+      - "8080"
+
+  redis:
+    container_name: evolution_redis
+    image: redis:7-alpine
+    restart: unless-stopped
+    command: >
+      redis-server --port 6379 --appendonly yes
+    volumes:
+      - evolution_redis:/data
+    networks:
+      evolution-net:
+        aliases:
+          - evolution-redis
+          - redis
+    expose:
+      - "6379"
+
+  evolution-postgres:
+    container_name: evolution_postgres
+    image: postgres:15-alpine
+    restart: unless-stopped
+    env_file:
+      - .env
+    command:
+      - postgres
+      - -c
+      - max_connections=200
+      - -c
+      - listen_addresses=*
+    environment:
+      - POSTGRES_DB=${POSTGRES_DATABASE:-evolution_db}
+      - POSTGRES_USER=${POSTGRES_USERNAME:-evolution}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-evolution}
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      evolution-net:
+        aliases:
+          - postgres
+          - evolution-postgres
+    expose:
+      - "5432"
+
+volumes:
+  f29_wrangler_data:
+    name: f29_wrangler_data
+  evolution_instances:
+    name: f29_evolution_instances
+  evolution_redis:
+    name: f29_evolution_redis
+  postgres_data:
+    name: f29_postgres_data
+
+networks:
+  evolution-net:
+    name: f29-evolution-net
+    driver: bridge

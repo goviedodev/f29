@@ -11,5 +11,20 @@
 	"assets": {
 		"directory": "./dist/client",
 		"not_found_handling": "single-page-application"
+	},
+	"triggers": {
+		"crons": ["15 12 * * *"]
+	},
+	"d1_databases": [
+		{
+			"binding": "DB",
+			"database_name": "f29-db",
+			"database_id": "00000000-0000-0000-0000-000000000000",
+			"migrations_dir": "migrations"
+		}
+	],
+	"vars": {
+		"EVOLUTION_API_URL": "http://localhost:8080",
+		"EVOLUTION_INSTANCE": "contidep"
 	}
 }
